@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'dart:html' as html;
 import 'package:flutter/widgets.dart';
 import 'request/authorization_request.dart';
 import 'model/config.dart';
@@ -20,16 +21,12 @@ class RequestCode {
   Future<String> requestCode() async {
     var code;
     final String urlParams = _constructUrlParams();
-    
-    await _webView.launch(
-        Uri.encodeFull("${_authorizationRequest.url}?$urlParams"),
-        clearCookies: _authorizationRequest.clearCookies, 
-        hidden: false,  
-        rect: _config.screenSize
-    );
 
-    _webView.onUrlChanged.listen((String url) {
-      Uri uri = Uri.parse(url);
+    html.window.open(Uri.encodeFull("${_authorizationRequest.url}?$urlParams"), "_self");
+
+    html.window.onChange.listen((event) {
+      print(event);
+      Uri uri = Uri.parse(event.toString());
 
       if(uri.queryParameters["error"] != null) {
         _webView.close();
@@ -39,8 +36,29 @@ class RequestCode {
       if (uri.queryParameters["code"] != null) {
         _webView.close();
         _onCodeListener.add(uri.queryParameters["code"]);
-      }       
+      } 
     });
+    
+    // await _webView.launch(
+    //     Uri.encodeFull("${_authorizationRequest.url}?$urlParams"),
+    //     clearCookies: _authorizationRequest.clearCookies, 
+    //     hidden: false,  
+    //     rect: _config.screenSize
+    // );
+
+    // _webView.onUrlChanged.listen((String url) {
+    //   Uri uri = Uri.parse(url);
+
+    //   if(uri.queryParameters["error"] != null) {
+    //     _webView.close();
+    //     throw new Exception("Access denied or authentation canceled."); 
+    //   }
+      
+    //   if (uri.queryParameters["code"] != null) {
+    //     _webView.close();
+    //     _onCodeListener.add(uri.queryParameters["code"]);
+    //   }       
+    // });
 
     code = await _onCode.first;
     return code;

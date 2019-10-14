@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AadOAuth {
   static Config _config;
-  AuthStorage _authStorage;
+  // AuthStorage _authStorage;
   Token _token;
   RequestCode _requestCode;
   RequestToken _requestToken;
@@ -26,7 +26,7 @@ class AadOAuth {
 
   AadOAuth._internal(config){
     AadOAuth._config = config;
-    _authStorage = _authStorage ?? new AuthStorage();
+    // _authStorage = _authStorage ?? new AuthStorage();
     _requestCode = new RequestCode(_config);
     _requestToken = new RequestToken(_config);
   }
@@ -36,7 +36,7 @@ class AadOAuth {
   }
 
   Future<void> login() async {
-    await _removeOldTokenOnFirstLogin();
+    // await _removeOldTokenOnFirstLogin();
     if (!Token.tokenIsValid(_token) )
       await _performAuthorization();
   }
@@ -53,15 +53,15 @@ class AadOAuth {
   }
 
   Future<void> logout() async {
-    await _authStorage.clear();
-    await _requestCode.clearCookies();
+    // await _authStorage.clear();
+    // await _requestCode.clearCookies();
     _token = null;
     AadOAuth(_config);
   }
 
   Future<void> _performAuthorization() async {
     // load token from cache
-    _token = await _authStorage.loadTokenToCache();
+    // _token = await _authStorage.loadTokenToCache();
 
     //still have refreh token / try to get new access token with refresh token
     if (_token != null)
@@ -77,7 +77,7 @@ class AadOAuth {
     }
 
     //save token to cache
-    await _authStorage.saveTokenToCache(_token);
+    // await _authStorage.saveTokenToCache(_token);
   }
 
   Future<void> _performFullAuthFlow() async {
